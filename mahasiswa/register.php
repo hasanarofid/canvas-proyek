@@ -95,7 +95,7 @@ if (isset($_POST['submit'])) {
             <div class="d-flex flex-column">
                 <h4 class="mt-5 text-center">Canvas - Registrasi Akun Mahasiswa</h4>
                 <div class="d-flex justify-content-center">
-                    <img src="../img/logo.png" class="img-fluid" width="100" alt="">
+                <img src="../img/logocanvas.png" alt="Logo" class="img-fluid" width="100" >
                 </div>
             </div>
             <div class="col-xl-10 col-lg-12 col-md-9 col-sm-12">
@@ -110,18 +110,24 @@ if (isset($_POST['submit'])) {
                                             <input type="email" class="form-control form-control-user" name="email" placeholder="Masukkan Email" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
-                                        </div>
-                                        <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="nama" placeholder="Masukkan Nama" required>
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="nohp" placeholder="Masukkan No. HP" required>
                                         </div>
                                         <div class="form-group">
-                                            <textarea class="form-control form-control-user" name="deskripsi" placeholder="Masukkan Deskripsi" required></textarea>
+                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
                                         </div>
                                         <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" name="password-konfrim" placeholder="Konformasi Password" required>
+                                            <span id="error-message" style="color: red;"></span>
+                                        </div>
+
+
+                                        <!-- <div class="form-group">
+                                            <textarea class="form-control form-control-user" name="deskripsi" placeholder="Masukkan Deskripsi" required></textarea>
+                                        </div> -->
+                                        <!-- <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="instagram_link" placeholder="Masukkan Instagram Link" required>
                                         </div>
                                         <div class="form-group">
@@ -129,7 +135,7 @@ if (isset($_POST['submit'])) {
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="facebook_link" placeholder="Masukkan Facebook Link" required>
-                                        </div>
+                                        </div> -->
                                         <button type="submit" name="submit" class="btn btn-secondary btn-user btn-block">
                                             Register
                                         </button>
@@ -155,9 +161,26 @@ if (isset($_POST['submit'])) {
     <?php include "plugin.php"; ?>
 
     <script>
+
         <?php if (isset($script)) {
             echo $script;
         } ?>
+
+$(document).ready(function(){
+    // alert(1);
+        // Listen for input changes in the password fields
+        $('#password, #password-konfirm').on('keyup', function () {
+            var password = $('#password').val();
+            var confirmPassword = $('#password-konfirm').val();
+
+            // Check if the passwords match
+            if (password === confirmPassword) {
+                $('#error-message').html('');
+            } else {
+                $('#error-message').html('Password tidak sesuai.');
+            }
+        });
+    });
     </script>
 
 </body>

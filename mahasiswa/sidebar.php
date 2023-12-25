@@ -2,7 +2,8 @@
 
     <!-- Sidebar - Brand -->
     <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <small> Canvas</small>
+        <img src="../img/logocanvas.png" alt="Logo" class="img-fluid">
+    <!-- <small> Canvas</small> -->
     </a>
 
     <!-- Divider -->

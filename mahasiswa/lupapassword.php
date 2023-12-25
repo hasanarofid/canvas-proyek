@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
 
     <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -64,24 +64,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">X</button>
                 </div>
                 <div class="modal-body">
-                    <!-- Tempatkan PDF di sini -->
                     <embed src="..//Tata Cara Penggunaan Website Canvas.pdf" type="application/pdf" width="100%" height="600px" />
                 </div>
                 <div class="modal-footer">
-                    <!-- Tombol Download -->
                     <a href="..//Tata Cara Penggunaan Website Canvas.pdf" download class="btn btn-primary">Download</a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="container">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
             <div class="d-flex flex-column">
-                <h4 class="mt-5 text-center">Canvas - Login Mahasiswa</h4>
+                <h4 class="mt-5 text-center">Canvas - Ubah Password Mahasiswa</h4>
                 <div class="d-flex justify-content-center">
                 <img src="../img/logocanvas.png" alt="Logo" class="img-fluid" width="100" >
                 </div>
@@ -99,10 +97,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <input type="email" class="form-control form-control-user" name="email" placeholder="Masukkan Email" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
+                                            <input type="text" class="form-control form-control-user" name="nohp" placeholder="Masukkan No. HP" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password Baru" required>
+                                        </div>
+                                        
+
+                                        <div class="form-group">
+                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Ulangi Password Baru" required>
                                         </div>
                                         <button type="submit" name="login" class="btn btn-secondary btn-user btn-block">
-                                            Login
+                                            Ubah Password
                                         </button>
                                     </form>
                                 </div>
@@ -115,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <hr>
                         <center>
-                            <a href="lupapassword.php">Lupa Password</a>
+                            <a href="login.php">Sudah punya Akun? Login</a>
                         </center>
                     </div>
                 </div>
@@ -130,11 +137,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php include "plugin.php"; ?>
 
 
-    <script>
-        $(document).ready(function() {
-            // $("#myModal").modal('show');
-        });
-    </script>
 
 
 </body>
