@@ -120,7 +120,8 @@
                     // Query untuk Aktivitas Klik Tugas
                     $queryKlikTugas = "SELECT DATE(timestamp) as tanggal, COUNT(*) as jumlah
                         FROM activity_log
-                        WHERE activity_type = 'klik_link' AND timestamp >= CURDATE() - INTERVAL 7 DAY
+                        WHERE activity_type = 'klik_link' AND timestamp >= CURDATE() - INTERVAL 30 DAY
+                        -- WHERE activity_type = 'klik_link' AND timestamp >= CURDATE() - INTERVAL 7 DAY
                         GROUP BY DATE(timestamp)
                         ORDER BY tanggal";
 
@@ -135,7 +136,8 @@
                     // Query untuk Pengiriman Tugas
                     $queryPengirimanTugas = "SELECT DATE(timestamp) as tanggal, COUNT(*) as jumlah
                         FROM activity_log
-                        WHERE activity_type = 'submit_assignment' AND timestamp >= CURDATE() - INTERVAL 7 DAY
+                        -- WHERE activity_type = 'submit_assignment' AND timestamp >= CURDATE() - INTERVAL 7 DAY
+                        WHERE activity_type = 'submit_assignment' AND timestamp >= CURDATE() - INTERVAL 30 DAY
                         GROUP BY DATE(timestamp)
                         ORDER BY tanggal";
 

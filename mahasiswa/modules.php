@@ -25,6 +25,58 @@
                 <?php include "topbar.php"; ?>
                 <!-- End of Topbar -->
 
+                    <!-- Begin Page Content -->
+                    <div class="container-fluid">
+                    <!-- DataTales Example -->
+                    <?php $class_id = $_GET['class_id']; ?>
+                    <?php $class = query("SELECT * FROM class WHERE class_id = $class_id")[0]; ?>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-dark">Data Jadwal Untuk Kelas : <?= $class['class_name']; ?></h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataX" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Topik</th>
+                                            <th>Link</th>
+                                            <th>Tanggal</th>
+                                            <th>Jam</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php
+                                        $i = 1;
+                                        $class_id = mysqli_real_escape_string($conn, $_GET['class_id']); // Ambil ID kelas dari parameter URL
+                                        $stmt = $conn->prepare("SELECT * FROM jadwal WHERE class_id = ?");
+                                        $stmt->bind_param("i", $class_id);
+
+                                        $stmt->execute();
+                                        $jadwals = $stmt->get_result();
+                                        ?>
+                                        <?php foreach ($jadwals as $jadwal) : ?>
+                                            <tr>
+                                                <td><?= $i; ?></td>
+                                                <td><?= htmlspecialchars($jadwal['topik']); ?></td>
+                                                <td><a target="_blank" href="<?= $jadwal['link_zoom'] ?>"><?= $jadwal['link_zoom'] ?></a></td>
+                                                <td><?= htmlspecialchars($jadwal['tanggal']); ?></td>
+                                                <td><?= htmlspecialchars($jadwal['jam']); ?></td>
+                                            </tr>
+
+                                            <?php $i++; ?>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <!-- DataTales Example -->
@@ -36,7 +88,7 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataX" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="dataX2" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>#</th>
@@ -81,155 +133,7 @@
                 
 
                  <!-- Begin Page Content -->
-                 <div class="container-fluid">
-                    <!-- DataTales Example -->
-                    <?php $class_id = $_GET['class_id']; ?>
-                    <?php $class = query("SELECT * FROM class WHERE class_id = $class_id")[0]; ?>
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-dark">Data Assignment Untuk Kelas : <?= $class['class_name']; ?></h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="dataX" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Judul</th>
-                                            <th>Assignment</th>
-                                            <th>Upload Submission</th>
-                                            <th>Status Task</th>
-                                            <th>Nilai</th>
-                                            <th>Feedback</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $i = 1;
-                                        $class_id = mysqli_real_escape_string($conn, $_GET['class_id']); // Ambil ID kelas dari parameter URL
-                                        $mahasiswa_id = $mahasiswa_id; // Menggunakan ID mahasiswa yang sudah tersedia
-                                        $stmt = $conn->prepare("SELECT * FROM assignments WHERE class_id = ?");
-                                        $stmt->bind_param("i", $class_id);
-
-                                        $stmt->execute();
-                                        $assignments = $stmt->get_result();
-
-
-                                   
-
-                                        ?>
-                                        <?php foreach ($assignments as $assignment) : ?>
-                                            <tr>
-                                                <td><?= $i; ?></td>
-                                                <td><?= htmlspecialchars($assignment['assignment_title']); ?></td>
-                                                <?php if ($assignment['is_link'] == 1) : ?>
-                                                    <td><a target="_blank" href="<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a></td>
-                                                <?php else : ?>
-                                                    <td><a target="_blank" download href="../documents/<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a></td>
-                                                <?php endif; ?>
-
-                                                <?php
-                                                // Cek apakah mahasiswa sudah mengirimkan submission untuk assignment ini
-                                                $stmt = $conn->prepare("SELECT * FROM assignment_submissions WHERE assignment_id = ? AND mahasiswa_id = ?");
-                                                $stmt->bind_param("ii", $assignment['assignment_id'], $mahasiswa_id);
-                                                $stmt->execute();
-                                                $submission = $stmt->get_result()->fetch_assoc();
-
-                                                if (!$submission) :
-                                                    // Jika submission sudah ada, tampilkan tombol "Upload Submission"
-                                                ?>
-                                                    <td>
-                                                        <form action="" method="POST" enctype="multipart/form-data">
-                                                            <input type="hidden" name="assignment_id" value="<?= $assignment['assignment_id']; ?>">
-                                                            <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa_id; ?>">
-                                                            <input type="file" class="form-control" id="submission_file" name="submission_file" accept=".pdf, image/jpeg, image/jpg, image/png, image/gif">
-                                                            <button type="submit" name="upload_submission" class="btn btn-primary mt-2">Upload Submission</button>
-                                                        </form>
-                                                    </td>
-                                                <?php else :
-                                                    // Jika submission belum ada, tampilkan pesan
-                                                    $submission_id = $submission['submission_id'];
-                                                ?>
-                                                    <td>
-                                                        <p>Anda telah mengirimkan submission untuk tugas ini.</p>
-                                                    </td>
-                                                <?php endif; ?>
-
-                                                <td>
-                                                    <!-- status task mahasiswa -->
-                                                <?php
-                                                 $stmt = $conn->prepare("SELECT * FROM assignment_submissions WHERE assignment_id = ? AND mahasiswa_id = ?");
-                                                 $stmt->bind_param("ii", $assignment['assignment_id'], $mahasiswa_id);
-                                                 $stmt->execute();
-                                                 $sts = $stmt->get_result()->fetch_assoc();
-                                               if ($sts) {
-                                                echo htmlspecialchars($sts['status']);
-                                                } else {
-                                                    echo "Doing";
-                                                }
-                                                ?>
-                                                </td>
-
-                                                <td>
-                                                    <!-- Tampilkan nilai sesuai submission_id dan mahasiswa_id -->
-                                                    <?php
-                                                    $stmt = $conn->prepare("SELECT grade,kriteria FROM grades WHERE submission_id = ? AND mahasiswa_id = ?");
-                                                    $stmt->bind_param("ii", $submission_id, $mahasiswa_id);
-                                                    $stmt->execute();
-                                                    $result = $stmt->get_result();
-                                                    $grade = $result->fetch_assoc();
-                                                    // var_dump($grade);die;
-                                                    if ($grade) {
-                                                        echo htmlspecialchars($grade['grade']) .' | '.htmlspecialchars($grade['kriteria']) ;
-                                                    } else {
-                                                        echo "Belum dinilai";
-                                                    }
-                                                    ?>
-                                                </td>
-                                                <td>
-                                                    <?php
-                                                    $mahasiswa_id = $mahasiswa_id;
-
-                                                    // Periksa apakah sudah ada feedback untuk tugas ini
-                                                    $stmt = $conn->prepare("SELECT feedback FROM grades WHERE submission_id = ? AND mahasiswa_id = ?");
-                                                    $stmt->bind_param("ii", $submission_id, $mahasiswa_id);
-                                                    $stmt->execute();
-                                                    $result = $stmt->get_result();
-                                                    $existing_feedback = $result->fetch_assoc();
-                                                    
-
-                                                    if ($existing_feedback !== null && isset($existing_feedback['feedback'])) {
-                                                        // Feedback is available, display it
-                                                        echo htmlspecialchars($existing_feedback['feedback']);
-                                                    } else {
-                                                        // No feedback available, display a message or a form
-                                                        echo '<p>No feedback available.</p>';
-                                                        // Uncomment the following lines if you want to display a form
-                                                        /*
-                                                        ?>
-                                                        <form action="" method="POST" enctype="multipart/form-data">
-                                                            <input type="hidden" name="submission_id" value="<?= $submission_id; ?>">
-                                                            <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa_id; ?>">
-                                                            <textarea class="form-control" id="feedback" name="feedback" rows="3"></textarea>
-                                                            <button type="submit" name="submit_feedback" class="btn btn-primary mt-2">Submit Feedback</button>
-                                                        </form>
-                                                        <?php
-                                                        */
-                                                    }
-                                                    ?>
-                                                </td>
-
-                                            </tr>
-                                            <?php $i++; ?>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
+                 
 
 
 
@@ -259,6 +163,23 @@
     <script>
         $(document).ready(function() {
             $('#dataX').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Indonesian.json",
+                    "oPaginate": {
+                        "sFirst": "Pertama",
+                        "sLast": "Terakhir",
+                        "sNext": "Selanjutnya",
+                        "sPrevious": "Sebelumnya"
+                    },
+                    "sInfo": "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                    "sSearch": "Cari:",
+                    "sEmptyTable": "Tidak ada data yang tersedia dalam tabel",
+                    "sLengthMenu": "Tampilkan _MENU_ data",
+                    "sZeroRecords": "Tidak ada data yang cocok dengan pencarian Anda"
+                }
+            });
+
+            $('#dataX2').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Indonesian.json",
                     "oPaginate": {

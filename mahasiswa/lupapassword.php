@@ -24,33 +24,110 @@ session_start();
 include '../functions.php';
 
 // cek apakah form telah disubmit
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    error_reporting(0);
-    // mengambil data dari form login
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+if (isset($_POST['submit'])) {
+    // Get form data
+    $email = $_POST['email'];
+    $nohp = $_POST['nohp'];
+    $password = $_POST['password'];
+    $passwordUlang = $_POST['password-ulang'];
 
-    // melindungi dari SQL injection
-    $email = mysqli_real_escape_string($conn, $email);
-    $password = mysqli_real_escape_string($conn, $password);
+    // Validate the form data if needed
 
-    // mencari user di database
-    $sql = "SELECT * FROM mahasiswa WHERE email = '$email' LIMIT 1";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_assoc($result);
-
-    // verifikasi password
-    if (password_verify($password, $user['password'])) {
-        // jika password benar, redirect ke halaman dashboard
-        $_SESSION["mahasiswa"] = true;
-        $_SESSION["email"] = $email;
-        header("Location: ./index.php");
-        exit();
+    // Check if the passwords match
+    if ($password !== $passwordUlang) {
+        // Passwords do not match, handle the error
+        echo "Passwords do not match!";
     } else {
-        // jika password salah, tampilkan pesan error
-        $error = "Email atau password salah";
+        // Connect to your database and perform the necessary user validation
+        // Example: Replace 'your_table' with your actual user table name
+        $checkUserQuery = "SELECT * FROM mahasiswa WHERE email = ? AND nohp = ?";
+        $stmtCheckUser = $conn->prepare($checkUserQuery);
+        $stmtCheckUser->bind_param("ss", $email, $nohp);
+        $stmtCheckUser->execute();
+        $result = $stmtCheckUser->get_result();
+
+        if ($result->num_rows > 0) {
+            // User found, proceed with updating the password in the database
+
+            // Example update query (replace with your actual query)
+            $updateQuery = "UPDATE mahasiswa SET password = ? WHERE email = ? AND nohp = ?";
+            $stmt = $conn->prepare($updateQuery);
+
+            // Hash the new password
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+            // Bind parameters
+            $stmt->bind_param("sss", $hashedPassword, $email, $nohp);
+
+            // Execute the query
+            if ($stmt->execute()) {
+                $script = "
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Ubah Password berhasil!',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            ";
+            } else {
+                $script = "
+                Swal.fire({
+                    icon: 'danger',
+                    title: 'Ubah Password gagal!',
+                    timer: 3000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+            ";
+            }
+
+            // Close the statement
+            $stmt->close();
+        } else {
+            // User not found, display an error message
+            $script = "
+            Swal.fire({
+                icon: 'danger',
+                title: 'Email dan no hp Salah!',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        ";
+        }
+
+        // Close the statement for checking user
+        $stmtCheckUser->close();
     }
 }
+// if ($_SERVER["REQUEST_METHOD"] == "POST") {
+//     error_reporting(0);
+//     // mengambil data dari form login
+//     $email = $_POST["email"];
+//     $password = $_POST["password"];
+
+//     // melindungi dari SQL injection
+//     $email = mysqli_real_escape_string($conn, $email);
+//     $password = mysqli_real_escape_string($conn, $password);
+
+//     // mencari user di database
+//     $sql = "SELECT * FROM mahasiswa WHERE email = '$email' LIMIT 1";
+//     $result = mysqli_query($conn, $sql);
+//     $user = mysqli_fetch_assoc($result);
+
+//     // verifikasi password
+//     if (password_verify($password, $user['password'])) {
+//         // jika password benar, redirect ke halaman dashboard
+//         $_SESSION["mahasiswa"] = true;
+//         $_SESSION["email"] = $email;
+//         header("Location: ./index.php");
+//         exit();
+//     } else {
+//         // jika password salah, tampilkan pesan error
+//         $error = "Email atau password salah";
+//     }
+// }
 ?>
 
 <body>
@@ -109,7 +186,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
                                             <span id="error-message" style="color: red;"></span>
                                         </div>
-                                        <button type="submit" name="login" class="btn btn-secondary btn-user btn-block">
+                                        <button type="submit" name="submit" class="btn btn-secondary btn-user btn-block">
                                             Ubah Password
                                         </button>
                                     </form>
@@ -178,7 +255,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
         });
 </script>
-
+<script>
+        <?php if (isset($script)) {
+            echo $script;
+        } ?>
+    </script>
 </body>
 
 </html>

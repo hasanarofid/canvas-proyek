@@ -44,6 +44,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // jika password benar, redirect ke halaman dashboard
         $_SESSION["mentor"] = true;
         $_SESSION["email"] = $email;
+        $_SESSION["id"] = $user['id'];
+        $_SESSION["foto"] = $user['foto'];
         $_SESSION["nama"] = $user['nama'];
         header("Location: ./index.php");
         exit();

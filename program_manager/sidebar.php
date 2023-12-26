@@ -45,6 +45,13 @@ padding-left: 0;
             <span>Dashboard</span></a>
     </li>
 
+
+    <li class="nav-item active">
+        <a class="nav-link" href="analytic.php">
+        <i class="fas fa-chart-bar"></i>
+            <span>Analytic</span></a>
+    </li>
+
     <!-- Divider -->
     <hr class="sidebar-divider">
 
