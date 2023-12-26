@@ -5,15 +5,19 @@
     <?php include "link.php"; ?>
 </head>
 
-<?php
 
+<?php
 if (isset($_POST['submit'])) {
     // Ambil data dari form
-    $task_name = mysqli_real_escape_string($conn, $_POST['task_name']);
-    $task_description = mysqli_real_escape_string($conn, $_POST['task_description']);
-    $task_due_date = mysqli_real_escape_string($conn, $_POST['task_due_date']);
+    $nilai = mysqli_real_escape_string($conn, $_POST['nilai']);
+    $grade = mysqli_real_escape_string($conn, $_POST['grade']);
+    $grade_range_start = mysqli_real_escape_string($conn, $_POST['grade_range_start']);
+    $grade_range_end = mysqli_real_escape_string($conn, $_POST['grade_range_end']);
 
-    if (empty($task_name) || empty($task_description) || empty($task_due_date)) {
+    // Tentukan lokasi penyimpanan gambar
+
+
+    if (empty($nilai) || empty($grade)) {
         $script = "
             Swal.fire({
                 icon: 'error',
@@ -25,81 +29,75 @@ if (isset($_POST['submit'])) {
             });
         ";
     } else {
-        $query = "INSERT INTO tasks (task_name, task_description, task_due_date, mahasiswa_id) 
-                  VALUES ('$task_name', '$task_description', '$task_due_date', '$mahasiswa_id')";
-        if (mysqli_query($conn, $query)) {
+        // Upload gambar ke direktori
+        $query = "INSERT INTO grade_nilai (nilai,grade,grade_range_start,grade_range_end) 
+        VALUES ('$nilai','$grade','$grade_range_start','$grade_range_end')";
+            if (mysqli_query($conn, $query)) {
             $script = "
                 Swal.fire({
                     icon: 'success',
-                    title: 'Data Berhasil Ditambahkan!',
+                    title: 'Data Grade Nilai Berhasil Ditambahkan!',
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: false
                 });
             ";
-        } else {
+            } else {
             $script = "
                 Swal.fire({
                     icon: 'error',
-                    title: 'Data Gagal Ditambahkan!',
+                    title: 'Data Grade Nilai Gagal Ditambahkan!',
                     timer: 3000,
                     timerProgressBar: true,
                     showConfirmButton: false
                 });
             ";
-        }
+            }
     }
 }
 
 if (isset($_POST['edit'])) {
     // Ambil data dari form
-    $task_id = mysqli_real_escape_string($conn, $_POST['task_id']);
-    $task_name = mysqli_real_escape_string($conn, $_POST['task_name']);
-    $task_description = mysqli_real_escape_string($conn, $_POST['task_description']);
-    $task_due_date = mysqli_real_escape_string($conn, $_POST['task_due_date']);
+    $id = mysqli_real_escape_string($conn, $_POST['id']);
+    $nilai = mysqli_real_escape_string($conn, $_POST['nilai']);
+    $grade = mysqli_real_escape_string($conn, $_POST['grade']);
+    $grade_range_start = mysqli_real_escape_string($conn, $_POST['grade_range_start']);
+    $grade_range_end = mysqli_real_escape_string($conn, $_POST['grade_range_end']);
 
-    if (empty($task_name) || empty($task_description) || empty($task_due_date)) {
+    $query = "UPDATE grade_nilai 
+    SET nilai = '$nilai', grade = '$grade', grade_range_start = '$grade_range_start'
+    , grade_range_end = '$grade_range_end'
+    WHERE id = '$id'";
+
+    // Cek apakah ada gambar yang diunggah
+    if (mysqli_query($conn, $query)) {
         $script = "
             Swal.fire({
-                icon: 'error',
-                title: 'Data Tidak Lengkap!',
-                text: 'Mohon isi semua kolom.',
+                icon: 'success',
+                title: 'Data Grade Nilai Berhasil Di-Edit!',
                 timer: 3000,
                 timerProgressBar: true,
                 showConfirmButton: false
             });
         ";
     } else {
-        $query = "UPDATE tasks SET task_name = '$task_name', task_description = '$task_description', task_due_date = '$task_due_date' 
-                  WHERE task_id = '$task_id' AND mahasiswa_id = '$mahasiswa_id'";
-        if (mysqli_query($conn, $query)) {
-            $script = "
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Data Berhasil di Edit!',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-            ";
-        } else {
-            $script = "
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Data Gagal Di-Edit!',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-            ";
-        }
+        $script = "
+            Swal.fire({
+                icon: 'error',
+                title: 'Data Grade Nilai Gagal Di-Edit!',
+                timer: 3000,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+        ";
     }
 }
 
-if (isset($_POST['hapus'])) {
-    $task_id = mysqli_real_escape_string($conn, $_POST['task_id']);
 
-    $query = "DELETE FROM tasks WHERE task_id = '$task_id' AND mahasiswa_id = '$mahasiswa_id'";
+if (isset($_POST['hapus'])) {
+    $id = mysqli_real_escape_string($conn, $_POST['id']);
+
+    $query = "DELETE FROM grade_nilai WHERE id = '$id'";
     if (mysqli_query($conn, $query)) {
         $script = "
             Swal.fire({
@@ -147,38 +145,42 @@ if (isset($_POST['hapus'])) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div class="mb-3">
-                        <p style="display: none;">
+                <div class="mb-3">
+                        <p>
                             <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                <i class="fas fa-plus-square"></i> Kelola Tugas
+                                <i class="fas fa-plus-square"></i> Kelola Grade Nilai
                             </a>
                         </p>
                         <div class="collapse" id="collapseExample">
                             <div class="card card-body">
                                 <form method="POST" action="" enctype="multipart/form-data">
                                     <div class="form-group">
-                                        <label for="task_name">Nama Tugas:</label>
-                                        <input type="text" class="form-control" id="task_name" name="task_name" required>
+                                        <label for="class_name">Nilai:</label>
+                                        <input type="number" class="form-control" id="nilai" name="nilai"  required>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="task_description">Deskripsi Tugas:</label>
-                                        <textarea class="form-control" id="task_description" name="task_description" required></textarea>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="task_due_date">Tanggal Deadline:</label>
-                                        <input type="date" class="form-control" id="task_due_date" name="task_due_date" required>
-                                    </div>
-                                    <button type="submit" name="submit" class="btn btn-secondary w-100">Tambah Tugas</button>
-                                </form>
 
+                                    <div class="form-group">
+                                        <label for="class_name">Grade:</label>
+                                        <input type="text" class="form-control" id="grade" name="grade"  required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="class_name">Range Start:</label>
+                                        <input type="number" class="form-control" id="grade_range_start" name="grade_range_start"  required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="class_name">Range End:</label>
+                                        <input type="number" class="form-control" id="grade_range_end" name="grade_range_end"  required>
+                                    </div>
+                                    <button type="submit" name="submit" class="btn btn-secondary w-100">Tambah Grade Nilai</button>
+                                </form>
                             </div>
                         </div>
                     </div>
-                    <!-- Content Row -->
-                    <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-secondary">List Tugas</h6>
+                            <h6 class="m-0 font-weight-bold text-dark">Grades Nilai</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -186,87 +188,67 @@ if (isset($_POST['hapus'])) {
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Nama Tugas</th>
-                                            <th>Deskripsi Tugas</th>
-                                            <th>Tanggal Deadline</th>
-                                            <th style="display: none;">Aksi</th>
+                                            <th>Nilai</th>
+                                            <th>Grade</th>
+                                            <th>Range Start</th>
+                                            <th>Range End</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $stmt = $conn->prepare("SELECT * FROM tasks WHERE mahasiswa_id = ?");
-                                        $stmt->bind_param("i", $mahasiswa_id);
-                                        $mahasiswa_id = $mahasiswa_id;
-
+                                        $i = 1;
+                                        $stmt = $conn->prepare("SELECT *  FROM grade_nilai");
                                         $stmt->execute();
-                                        $tasks = $stmt->get_result();
+                                        $submissions = $stmt->get_result();
                                         ?>
-
-                                        <?php $i = 1; ?>
-                                        <?php foreach ($tasks as $task) : ?>
-                                            <?php
-$sql = "SELECT * FROM  assignments WHERE class_id = ?";
-$stmt = $conn->prepare($sql);
-
-// Bind the parameter
-$stmt->bind_param("i", $task['class_id']);
-
-// Execute the query
-$stmt->execute();
-
-// Get the result
-$result = $stmt->get_result();
-
-// Fetch one row as an associative array
-$assignment = $result->fetch_assoc();
-
-                                                 ?>
+                                        <?php foreach ($submissions as $submission) : ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
-                                                <td><?= htmlspecialchars($task['task_name']); ?></td>
+                                                <td><?= htmlspecialchars($submission['nilai']); ?></td>
+                                                <td><?= htmlspecialchars($submission['grade']); ?></td>
+                                                <td><?= htmlspecialchars($submission['grade_range_start']); ?></td>
+                                                <td><?= htmlspecialchars($submission['grade_range_end']); ?></td>
                                                 <td>
-                                                <?php if ($assignment['is_link'] == 1) : ?>
-                                                    <a target="_blank" href="<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a>
-                                                <?php else : ?>
-                                                <a target="_blank" download href="../documents/<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a>
-                                                <?php endif; ?>
-
-                                                    <br>
-                                                <?= htmlspecialchars($task['task_description']); ?>
-                                            </td>
-                                                <td><?= htmlspecialchars($task['task_due_date']); ?></td>
-                                                <td style="display: none;">
-                                                    <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $task['task_id'] ?>">Edit</a>
+                                                    <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $submission['id'] ?>">Edit</a>
                                                     <br><br>
-                                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapusModal<?= $task['task_id'] ?>">Hapus</a>
+                                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapusModal<?= $submission['id'] ?>">Hapus</a>
                                                 </td>
                                             </tr>
 
-                                            <!-- Modal Edit Tugas -->
-                                            <div class="modal fade" id="editModal<?= $task['task_id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                                    <!-- Modal Edit Kelas -->
+                                                    <div class="modal fade" id="editModal<?= $submission['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel">Edit Data Tugas</h5>
+                                                            <h5 class="modal-title" id="editModalLabel">Edit Data Kelas</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            <form action="" method="POST">
-                                                                <input type="hidden" name="task_id" value="<?= $task['task_id']; ?>">
+                                                            <form action="" method="POST" enctype="multipart/form-data">
+                                                                <input type="hidden" name="id" value="<?= $submission['id']; ?>">
                                                                 <div class="form-group">
-                                                                    <label for="task_name">Nama Tugas:</label>
-                                                                    <input type="text" class="form-control" id="task_name" name="task_name" value="<?= htmlspecialchars($task['task_name']); ?>" required>
+                                                                    <label for="class_name">Nilai:</label>
+                                                                    <input type="number" class="form-control" id="nilai" name="nilai" value="<?= $submission['nilai']; ?>" required>
                                                                 </div>
+
                                                                 <div class="form-group">
-                                                                    <label for="task_description">Deskripsi Tugas:</label>
-                                                                    <textarea class="form-control" id="task_description" name="task_description" required><?= htmlspecialchars($task['task_description']); ?></textarea>
+                                                                    <label for="class_name">Grade:</label>
+                                                                    <input type="text" class="form-control" id="grade" name="grade" value="<?= $submission['grade']; ?>" required>
                                                                 </div>
+
                                                                 <div class="form-group">
-                                                                    <label for="task_due_date">Tanggal Deadline:</label>
-                                                                    <input type="date" class="form-control" id="task_due_date" name="task_due_date" value="<?= htmlspecialchars($task['task_due_date']); ?>" required>
+                                                                    <label for="class_name">Range Start:</label>
+                                                                    <input type="number" class="form-control" id="grade_range_start" name="grade_range_start" value="<?= $submission['grade_range_start']; ?>" required>
                                                                 </div>
+
+                                                                <div class="form-group">
+                                                                    <label for="class_name">Range End:</label>
+                                                                    <input type="number" class="form-control" id="grade_range_end" name="grade_range_end" value="<?= $submission['grade_range_start']; ?>" required>
+                                                                </div>
+
                                                                 <button type="submit" name="edit" class="btn btn-secondary w-100">Simpan</button>
                                                             </form>
                                                         </div>
@@ -274,23 +256,23 @@ $assignment = $result->fetch_assoc();
                                                 </div>
                                             </div>
 
-                                            <!-- Modal Hapus Tugas -->
-                                            <div class="modal fade" id="hapusModal<?= $task['task_id'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <!-- Modal Hapus Kelas -->
+                                            <div class="modal fade" id="hapusModal<?= $submission['id'] ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="exampleModalLabel">Hapus Data Tugas</h5>
+                                                            <h5 class="modal-title" id="exampleModalLabel">Hapus Data Grade Nilai</h5>
                                                             <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">×</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
-                                                            Apakah Anda yakin ingin menghapus tugas dengan Nama: <b><?= htmlspecialchars($task['task_name']) ?></b>?
+                                                            Apakah Anda yakin ingin menghapus Grade Nilai dengan Nilai: <b><?= htmlspecialchars($submission['nilai']) ?></b>?
                                                         </div>
                                                         <div class="modal-footer">
                                                             <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
                                                             <form action="" method="post">
-                                                                <input type="hidden" name="task_id" value="<?= $task['task_id']; ?>">
+                                                                <input type="hidden" name="id" value="<?= $submission['id']; ?>">
                                                                 <button type="submit" name="hapus" class="btn btn-danger">Hapus</button>
                                                             </form>
                                                         </div>
@@ -298,17 +280,18 @@ $assignment = $result->fetch_assoc();
                                                 </div>
                                             </div>
 
-
-
                                             <?php $i++; ?>
                                         <?php endforeach; ?>
+
                                     </tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                 </div>
+
+
+
 
                 <!-- /.container-fluid -->
 

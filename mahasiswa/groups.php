@@ -122,7 +122,7 @@ if (isset($_POST['submit'])) {
                                             <select class="form-control" id="group_name" name="group_name" required>
                                                 <option value="" disabled selected>Pilih Grup</option>
                                                 <?php
-                                                $stmt = $conn->prepare("SELECT group_id, group_name FROM groups");
+                                                $stmt = $conn->prepare("SELECT group_id, group_name,link_group FROM groups");
                                                 $stmt->execute();
                                                 $groups = $stmt->get_result();
                                                 foreach ($groups as $group) {
@@ -141,7 +141,8 @@ if (isset($_POST['submit'])) {
                         // Jika mahasiswa sudah menjadi anggota grup, tampilkan daftar anggota pada grupnya
                         $gid = query("SELECT group_id FROM group_members WHERE mahasiswa_id = $mahasiswa_id")[0];
                         $grid = $gid["group_id"];
-                        $kel = query("SELECT group_name FROM groups WHERE group_id = $grid")[0];
+                        $kel = query("SELECT group_name,link_group FROM groups WHERE group_id = $grid")[0];
+                        // var_dump($kel);
                     ?>
                         <div class="card shadow mb-4">
                             <div class="card-header py-3">
@@ -154,6 +155,7 @@ if (isset($_POST['submit'])) {
                                             <tr>
                                                 <th>#</th>
                                                 <th>Nama Anggota</th>
+                                                <th>Link Group</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -173,6 +175,7 @@ if (isset($_POST['submit'])) {
                                                 echo '<tr>
                                     <td>' . $i . '</td>
                                     <td>' . htmlspecialchars($row['nama']) . '</td>
+                                    <td><a target="_blank" href="'.$kel["link_group"].'">'.$kel["link_group"].'</a></td>
                                 </tr>';
                                                 $i++;
                                             }

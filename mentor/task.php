@@ -3,6 +3,8 @@
 
 <head>
     <?php include "link.php"; ?>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-MzO/FmvDfVUZhL9g2Q/nDsZo+3IVhO6ZDVkoN+L2z6m6veZyeBEarhtOfUId04EJztA4QiaVqNMR1ARL4Ml8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-QLFWD2rmjXcnPUoUE1zJvMfXv2aLlP51V1GPM2WuJse7gWIskmpqaRK1e6LcH0nl0tOOiAdq5+oFlTkw92AZRg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <?php
@@ -12,6 +14,8 @@ if (isset($_POST['submit'])) {
     $task_name = mysqli_real_escape_string($conn, $_POST['task_name']);
     $task_description = mysqli_real_escape_string($conn, $_POST['task_description']);
     $task_due_date = mysqli_real_escape_string($conn, $_POST['task_due_date']);
+    $mahasiswa_id = mysqli_real_escape_string($conn, $_POST['mahasiswa_id']);
+    $class_id = $_GET['id'];
 
     if (empty($task_name) || empty($task_description) || empty($task_due_date)) {
         $script = "
@@ -25,8 +29,8 @@ if (isset($_POST['submit'])) {
             });
         ";
     } else {
-        $query = "INSERT INTO tasks (task_name, task_description, task_due_date, mahasiswa_id) 
-                  VALUES ('$task_name', '$task_description', '$task_due_date', '$mahasiswa_id')";
+        $query = "INSERT INTO tasks (task_name, task_description, task_due_date, mahasiswa_id,class_id) 
+                  VALUES ('$task_name', '$task_description', '$task_due_date', '$mahasiswa_id', '$class_id' )";
         if (mysqli_query($conn, $query)) {
             $script = "
                 Swal.fire({
@@ -99,7 +103,7 @@ if (isset($_POST['edit'])) {
 if (isset($_POST['hapus'])) {
     $task_id = mysqli_real_escape_string($conn, $_POST['task_id']);
 
-    $query = "DELETE FROM tasks WHERE task_id = '$task_id' AND mahasiswa_id = '$mahasiswa_id'";
+    $query = "DELETE FROM tasks WHERE task_id = '$task_id' ";
     if (mysqli_query($conn, $query)) {
         $script = "
             Swal.fire({
@@ -148,7 +152,7 @@ if (isset($_POST['hapus'])) {
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <div class="mb-3">
-                        <p style="display: none;">
+                        <p >
                             <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 <i class="fas fa-plus-square"></i> Kelola Tugas
                             </a>
@@ -160,6 +164,25 @@ if (isset($_POST['hapus'])) {
                                         <label for="task_name">Nama Tugas:</label>
                                         <input type="text" class="form-control" id="task_name" name="task_name" required>
                                     </div>
+                                    <div class="form-group">
+                                                                    <label for="task_name">Nama Mahasiswa:</label>
+                                                                    <select name="mahasiswa_id" id="mahasiswa_id" class="form-control" >
+                                                                        <option value="">.:Pilih:.</option>
+                                                                        <?php
+                                        $mahasiswas = $conn->prepare("SELECT * FROM mahasiswa");
+                                        $mahasiswas->execute();
+                                        $mahasiswas_list = $mahasiswas->get_result();
+                                        // var_dump($mahasiswas_list);die;
+                                        ?>
+                                         <?php foreach ($mahasiswas_list as $mahasiswa) : ?>
+                                            <option value="<?= $mahasiswa['id'] ?>"><?= $mahasiswa['nama'] ?></option>
+                                            <?php endforeach; ?>
+
+                                                                    </select>
+
+                                                                    
+
+                                                                </div>
                                     <div class="form-group">
                                         <label for="task_description">Deskripsi Tugas:</label>
                                         <textarea class="form-control" id="task_description" name="task_description" required></textarea>
@@ -189,53 +212,33 @@ if (isset($_POST['hapus'])) {
                                             <th>Nama Tugas</th>
                                             <th>Deskripsi Tugas</th>
                                             <th>Tanggal Deadline</th>
-                                            <th style="display: none;">Aksi</th>
+                                            <th >Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $stmt = $conn->prepare("SELECT * FROM tasks WHERE mahasiswa_id = ?");
-                                        $stmt->bind_param("i", $mahasiswa_id);
-                                        $mahasiswa_id = $mahasiswa_id;
-
+                                        $stmt = $conn->prepare("SELECT * FROM tasks WHERE class_id = ?");
+                                        $stmt->bind_param("i", $class_id);
+                                        $class_id = $_GET['id'];
                                         $stmt->execute();
                                         $tasks = $stmt->get_result();
+                                        // var_dump($tasks);die;
                                         ?>
 
                                         <?php $i = 1; ?>
                                         <?php foreach ($tasks as $task) : ?>
                                             <?php
-$sql = "SELECT * FROM  assignments WHERE class_id = ?";
-$stmt = $conn->prepare($sql);
 
-// Bind the parameter
-$stmt->bind_param("i", $task['class_id']);
-
-// Execute the query
-$stmt->execute();
-
-// Get the result
-$result = $stmt->get_result();
-
-// Fetch one row as an associative array
-$assignment = $result->fetch_assoc();
 
                                                  ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
                                                 <td><?= htmlspecialchars($task['task_name']); ?></td>
                                                 <td>
-                                                <?php if ($assignment['is_link'] == 1) : ?>
-                                                    <a target="_blank" href="<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a>
-                                                <?php else : ?>
-                                                <a target="_blank" download href="../documents/<?= $assignment['assignment_document'] ?>"><?= $assignment['assignment_document'] ?></a>
-                                                <?php endif; ?>
-
-                                                    <br>
                                                 <?= htmlspecialchars($task['task_description']); ?>
                                             </td>
                                                 <td><?= htmlspecialchars($task['task_due_date']); ?></td>
-                                                <td style="display: none;">
+                                                <td >
                                                     <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $task['task_id'] ?>">Edit</a>
                                                     <br><br>
                                                     <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapusModal<?= $task['task_id'] ?>">Hapus</a>
@@ -259,6 +262,7 @@ $assignment = $result->fetch_assoc();
                                                                     <label for="task_name">Nama Tugas:</label>
                                                                     <input type="text" class="form-control" id="task_name" name="task_name" value="<?= htmlspecialchars($task['task_name']); ?>" required>
                                                                 </div>
+                                                              
                                                                 <div class="form-group">
                                                                     <label for="task_description">Deskripsi Tugas:</label>
                                                                     <textarea class="form-control" id="task_description" name="task_description" required><?= htmlspecialchars($task['task_description']); ?></textarea>

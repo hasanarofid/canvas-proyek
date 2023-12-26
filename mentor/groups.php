@@ -9,6 +9,7 @@
 if (isset($_POST['submit'])) {
     // Ambil data dari form
     $group_name = mysqli_real_escape_string($conn, $_POST['group_name']);
+    $link_group = mysqli_real_escape_string($conn, $_POST['link_group']);
 
     if (empty($group_name)) {
         $script = "
@@ -23,8 +24,8 @@ if (isset($_POST['submit'])) {
         ";
     } else {
         // Tambahkan data grup ke tabel groups
-        $query = "INSERT INTO groups (group_name) 
-                  VALUES ('$group_name')";
+        $query = "INSERT INTO groups (group_name,link_group) 
+                  VALUES ('$group_name','$link_group')";
         if (mysqli_query($conn, $query)) {
             $script = "
                 Swal.fire({
@@ -53,11 +54,17 @@ if (isset($_POST['edit'])) {
     // Ambil data dari form
     $group_id = mysqli_real_escape_string($conn, $_POST['group_id']);
     $group_name = mysqli_real_escape_string($conn, $_POST['group_name']);
-
+    $link_group = mysqli_real_escape_string($conn, $_POST['link_group']);
+    
     // Perbarui data grup di tabel groups
     $query = "UPDATE groups 
-              SET group_name = '$group_name'
+              SET group_name = '$group_name', link_group = '$link_group'
               WHERE group_id = '$group_id'";
+    
+    // Eksekusi query
+    // $result = mysqli_query($conn, $query);
+    
+
     if (mysqli_query($conn, $query)) {
         $script = "
             Swal.fire({
@@ -146,6 +153,11 @@ if (isset($_POST['hapus'])) {
                                         <label for="group_name">Nama Group:</label>
                                         <input type="text" class="form-control" id="group_name" name="group_name" required>
                                     </div>
+
+                                    <div class="form-group">
+                                        <label for="group_name">Link Group:</label>
+                                        <input type="text" class="form-control" id="link_group" name="link_group" required>
+                                    </div>
                                     <button type="submit" name="submit" class="btn btn-secondary w-100">Tambah Group</button>
                                 </form>
                             </div>
@@ -164,13 +176,14 @@ if (isset($_POST['hapus'])) {
                                         <tr>
                                             <th>#</th>
                                             <th>Nama Grup</th>
+                                            <th>Link Grup</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
                                         $i = 1;
-                                        $stmt = $conn->prepare("SELECT group_id, group_name FROM groups");
+                                        $stmt = $conn->prepare("SELECT group_id, group_name,link_group FROM groups");
                                         $stmt->execute();
                                         $groups = $stmt->get_result();
                                         ?>
@@ -178,6 +191,7 @@ if (isset($_POST['hapus'])) {
                                             <tr>
                                                 <td><?= $i; ?></td>
                                                 <td><?= htmlspecialchars($group['group_name']); ?></td>
+                                                <td><a target="_blank" href="<?= $group['link_group'] ?>"><?= $group['link_group'] ?></a></td>
                                                 <td>
                                                     <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $group['group_id'] ?>">Edit</a>
                                                     <br><br>
@@ -201,6 +215,10 @@ if (isset($_POST['hapus'])) {
                                                                 <div class="form-group">
                                                                     <label for="group_name">Nama Grup:</label>
                                                                     <input type="text" class="form-control" id="group_name" name="group_name" value="<?= htmlspecialchars($group['group_name']); ?>" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="group_name">Link Grup:</label>
+                                                                    <input type="text" class="form-control" id="link_group" name="link_group" value="<?= htmlspecialchars($group['link_group']); ?>" required>
                                                                 </div>
                                                                 <button type="submit" name="edit" class="btn btn-secondary w-100">Simpan</button>
                                                             </form>

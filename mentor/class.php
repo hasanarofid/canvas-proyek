@@ -270,7 +270,8 @@ if (isset($_POST['hapus'])) {
                                                     <br><br>
                                                     <a class="btn btn-sm btn-success" href="assignments.php?id=<?= $class['class_id']; ?>"> <i class="fas fa-book"></i> Kelola Assignments</a>
                                                     <br><br>
-                                                    <a class="btn btn-sm btn-success" href="syllabus.php?id=<?= $class['class_id']; ?>"> <i class="fsa fa-sync"></i> Kelola Syllabus</a>
+                                                    <a class="btn btn-sm btn-success" href="syllabus.php?id=<?= $class['class_id']; ?>"> <i class="fas fa-sync"></i> Kelola Syllabus</a>
+                                                    <a class="btn btn-sm btn-info" href="task.php?id=<?= $class['class_id']; ?>"> <i class="fas fa-users"></i> Kelola Task</a>
                                                 </td>
                                                 <td><?= htmlspecialchars($class['class_name']); ?></td>
                                                 <td><?= htmlspecialchars($class['nama']); ?></td>

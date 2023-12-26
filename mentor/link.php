@@ -11,6 +11,8 @@
 <link rel="stylesheet" href="../vendor/fontawesome-free/css/fontawesome.css">
 <script src="../vendor/jquery/jquery.min.js"></script>
 <link rel="stylesheet" href="../vendor/sweetalert2/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-MzO/FmvDfVUZhL9g2Q/nDsZo+3IVhO6ZDVkoN+L2z6m6veZyeBEarhtOfUId04EJztA4QiaVqNMR1ARL4Ml8pA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <?php
 
 session_start();

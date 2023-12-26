@@ -35,16 +35,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = mysqli_real_escape_string($conn, $password);
 
     // mencari user di database
-    $sql = "SELECT * FROM program_manager WHERE email = '$email' LIMIT 1";
+    $sql = "SELECT * FROM mahasiswa WHERE email = '$email' LIMIT 1";
     $result = mysqli_query($conn, $sql);
     $user = mysqli_fetch_assoc($result);
 
     // verifikasi password
     if (password_verify($password, $user['password'])) {
         // jika password benar, redirect ke halaman dashboard
-        $_SESSION["program_manager"] = true;
+        $_SESSION["mahasiswa"] = true;
         $_SESSION["email"] = $email;
-        $_SESSION["nama"] = $user['nama'];
         header("Location: ./index.php");
         exit();
     } else {
@@ -56,9 +55,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
 
-
     <!-- Modal -->
-    <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <!-- <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -66,29 +64,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" class="btn btn-close" data-dismiss="modal" aria-label="Close">X</button>
                 </div>
                 <div class="modal-body">
-                    <!-- Tempatkan PDF di sini -->
                     <embed src="..//Tata Cara Penggunaan Website Canvas.pdf" type="application/pdf" width="100%" height="600px" />
                 </div>
                 <div class="modal-footer">
-                    <!-- Tombol Download -->
                     <a href="..//Tata Cara Penggunaan Website Canvas.pdf" download class="btn btn-primary">Download</a>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-    </div>
-
+    </div> -->
 
     <div class="container">
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="d-flex flex-column mb-1">
-                <h4 class="mt-5 text-center">Canvas - Login Program Manager</h4>
-                <div class="d-flex justify-content-center">
-                    <img src="../img/logocanvas.png" alt="Logo"  width="600px" height="200px" >
-         
-                </div>
+        <div class="d-flex flex-column mb-1">
+                <h4 class="mt-5 text-center">Canvas - Lupa Password Program Manager</h4>
+            <img src="../img/logocanvas.png" alt="Logo"  width="600px" height="200px" >
+                
             </div>
             <div class="col-xl-10 col-lg-12 col-md-9 col-sm-12">
 
@@ -103,10 +96,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <input type="email" class="form-control form-control-user" name="email" placeholder="Masukkan Email" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
+                                            <input type="text" class="form-control form-control-user" name="nohp" placeholder="Masukkan No. HP" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="password" id="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password Baru" required>
+                                            <span id="error-message1" style="color: red;"></span>
+                                        </div>
+                                        
+
+                                        <div class="form-group">
+                                            <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                            <span id="error-message" style="color: red;"></span>
                                         </div>
                                         <button type="submit" name="login" class="btn btn-secondary btn-user btn-block">
-                                            Login
+                                            Ubah Password
                                         </button>
                                     </form>
                                 </div>
@@ -116,10 +120,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <center>
                             <a href="register.php">Registrasi Akun</a>
                         </center>
+
                         <hr>
                         <center>
-                            <a href="lupapassword.php">Lupa Password</a>
-                        </center>                    </div>
+                            <a href="login.php">Sudah punya Akun? Login</a>
+                        </center>
+                    </div>
                 </div>
 
             </div>
@@ -131,12 +137,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php include "footer.php"; ?>
     <?php include "plugin.php"; ?>
 
-    <script>
-        $(document).ready(function() {
-            // $("#myModal").modal('show');
-        });
-    </script>
 
+<script>
+            $(document).ready(function () {
+            // Function to validate password format
+            function validatePassword(password) {
+                // Password should be at least 8 characters and contain a combination of letters and numbers
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+                return passwordRegex.test(password);
+            }
+
+            // Function to display error message
+            function displayErrorMessage(message, elementId) {
+                $("#" + elementId).text(message);
+            }
+
+            // Event handler for password input
+            $("#password").on("input", function () {
+                var password = $(this).val();
+                var errorMessageId = "error-message1";
+
+                if (validatePassword(password)) {
+                    displayErrorMessage("", errorMessageId);
+                } else {
+                    displayErrorMessage("Password harus minimal 8 karakter dan mengandung kombinasi huruf dan angka.", errorMessageId);
+                }
+            });
+
+            // Event handler for password-ulang input
+            $("#password-ulang").on("input", function () {
+                var confirmPassword = $(this).val();
+                var password = $("#password").val();
+                var errorMessageId = "error-message";
+
+                if (password === confirmPassword) {
+                    displayErrorMessage("", errorMessageId);
+                } else {
+                    displayErrorMessage("Ulangi password harus sama dengan password baru di atas.", errorMessageId);
+                }
+            });
+        });
+</script>
 
 </body>
 

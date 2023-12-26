@@ -6,7 +6,34 @@
 </head>
 
 <?php
+
+$mahasiswa_id = $mahasiswa_id;
+
+// Prepare and execute the UPDATE query
+$update = $conn->prepare("UPDATE tasks SET task_status = ? WHERE class_id = ? AND mahasiswa_id = ? and task_status = 'To Do' ");
+$new_status = 'Doing'; // Set the new status as a variable
+$update->bind_param("sii", $new_status, $_GET['class_id'], $mahasiswa_id );
+
+// Execute the query
+$update->execute();
+
+// // Check if the query was successful
+// if ($update->affected_rows > 0) {
+//     echo "Update successful!";
+// } else {
+//     echo "No rows were updated or an error occurred.";
+// }
+
 if (isset($_POST['upload_submission'])) {
+
+    $update = $conn->prepare("UPDATE tasks SET task_status = ? WHERE class_id = ? AND mahasiswa_id = ?");
+    $new_status = 'Done'; // Set the new status as a variable
+    $update->bind_param("sii", $new_status, $_GET['class_id'], $mahasiswa_id);
+
+    // Execute the query
+    $update->execute();
+
+
     $assignment_id = mysqli_real_escape_string($conn, $_POST['assignment_id']);
     $mahasiswa_id = mysqli_real_escape_string($conn, $_POST['mahasiswa_id']);
 
@@ -156,6 +183,7 @@ if (isset($_POST['submit_feedback'])) {
                                             <th>Judul</th>
                                             <th>Assignment</th>
                                             <th>Upload Submission</th>
+                                            <th>Status Task</th>
                                             <th>Nilai</th>
                                             <th>Feedback</th>
                                         </tr>
@@ -170,6 +198,10 @@ if (isset($_POST['submit_feedback'])) {
 
                                         $stmt->execute();
                                         $assignments = $stmt->get_result();
+
+
+                                   
+
                                         ?>
                                         <?php foreach ($assignments as $assignment) : ?>
                                             <tr>
@@ -209,15 +241,35 @@ if (isset($_POST['submit_feedback'])) {
                                                 <?php endif; ?>
 
                                                 <td>
+                                                    <!-- status task mahasiswa -->
+                                                <?php
+                                               $sql = "SELECT * FROM tasks WHERE class_id = ? AND mahasiswa_id = ?";
+                                               $status = $conn->prepare($sql);
+                                               
+                                               
+                                               $status->bind_param("ii", $assignment['class_id'], $mahasiswa_id);
+                                               $status->execute();
+                                               $statustask = $status->get_result();
+                                               $sts = $statustask->fetch_assoc();
+                                               if ($sts) {
+                                                echo htmlspecialchars($sts['task_status']);
+                                                } else {
+                                                    echo "Belum dinilai";
+                                                }
+                                                ?>
+                                                </td>
+
+                                                <td>
                                                     <!-- Tampilkan nilai sesuai submission_id dan mahasiswa_id -->
                                                     <?php
-                                                    $stmt = $conn->prepare("SELECT grade FROM grades WHERE submission_id = ? AND mahasiswa_id = ?");
+                                                    $stmt = $conn->prepare("SELECT grade,kriteria FROM grades WHERE submission_id = ? AND mahasiswa_id = ?");
                                                     $stmt->bind_param("ii", $submission_id, $mahasiswa_id);
                                                     $stmt->execute();
                                                     $result = $stmt->get_result();
                                                     $grade = $result->fetch_assoc();
+                                                    // var_dump($grade);die;
                                                     if ($grade) {
-                                                        echo htmlspecialchars($grade['grade']);
+                                                        echo htmlspecialchars($grade['grade']) .' | '.htmlspecialchars($grade['kriteria']) ;
                                                     } else {
                                                         echo "Belum dinilai";
                                                     }
@@ -234,6 +286,7 @@ if (isset($_POST['submit_feedback'])) {
                                                     $result = $stmt->get_result();
                                                     $existing_feedback = $result->fetch_assoc();
                                                     
+
                                                     if ($existing_feedback !== null && isset($existing_feedback['feedback'])) {
                                                         // Feedback is available, display it
                                                         echo htmlspecialchars($existing_feedback['feedback']);

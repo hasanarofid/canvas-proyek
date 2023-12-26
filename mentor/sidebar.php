@@ -1,10 +1,38 @@
-<ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+<style>
+ .sidebar .sidebar-brand {
+    /* padding-top: 0rem; */
+    /* padding-bottom: 1rem; */
+/* margin-bottom: 90px; */
+/* padding: 0;
+margin: 0; */
+padding-top: 0;
+padding-right: 0;
+padding-bottom: 7rem;
+padding-left: 0;
+}
 
-    <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.php">
-        <small> Canvas</small>
+/* Additional styles to make the logo larger */
+.sidebar .sidebar-brand img {
+    /* max-width: 100%;
+    height: auto;
+    width: 100%;
+    max-height: 200px;  */
+    width: 400px;
+    height: 400px;
+    margin-bottom: 80px;
+}
+
+@media (min-width: 768px) {
+    .sidebar .sidebar-brand img {
+        max-height: 150px; /* Adjust as needed for larger screens */
+    }
+}
+</style>
+<ul style="background-color: #97AEC0;" class="navbar-nav  sidebar sidebar-dark accordion" id="accordionSidebar">
+
+<a class="sidebar-brand" href="index.php">
+        <img src="../img/logocanvas.png" alt="Logo" class="img-fluid">
     </a>
-
     <!-- Divider -->
     <hr class="sidebar-divider my-0">
 
@@ -25,6 +53,12 @@
         <a class="nav-link" href="groups.php">
             <i class="fas fa-users"></i>
             <span>Groups</span></a>
+    </li>
+
+    <li class="nav-item active">
+        <a class="nav-link" href="grade_nilai.php">
+            <i class="fas fa-table"></i>
+            <span>Grade Nilai</span></a>
     </li>
 
     <li class="nav-item active">

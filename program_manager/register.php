@@ -28,10 +28,10 @@ if (isset($_POST['submit'])) {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $nama = mysqli_real_escape_string($conn, $_POST['nama']);
     $nohp = mysqli_real_escape_string($conn, $_POST['nohp']);
-    $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
-    $instagram_link = mysqli_real_escape_string($conn, $_POST['instagram_link']);
-    $tiktok_link = mysqli_real_escape_string($conn, $_POST['tiktok_link']);
-    $facebook_link = mysqli_real_escape_string($conn, $_POST['facebook_link']);
+    // $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
+    // $instagram_link = mysqli_real_escape_string($conn, $_POST['instagram_link']);
+    // $tiktok_link = mysqli_real_escape_string($conn, $_POST['tiktok_link']);
+    // $facebook_link = mysqli_real_escape_string($conn, $_POST['facebook_link']);
 
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -85,25 +85,22 @@ if (isset($_POST['submit'])) {
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column mb-1">
                 <h4 class="mt-5 text-center">Canvas - Registrasi Akun Program Manager</h4>
-                <div class="d-flex justify-content-center">
-                    <img src="../img/logo.png" class="img-fluid" width="100" alt="">
-                </div>
+                <img src="../img/logocanvas.png" alt="Logo"  width="600px" height="200px" >
+
             </div>
             <div class="col-xl-10 col-lg-12 col-md-9 col-sm-12">
 
-                <div class="card o-hidden border-0 my-5">
+
+                <div class="card o-hidden border-0">
                     <div class="card-body p-0">
                         <div class="row">
                             <div class="col">
                                 <div class="p-2">
                                     <form class="user" method="POST" action="">
-                                        <div class="form-group">
+                                    <div class="form-group">
                                             <input type="email" class="form-control form-control-user" name="email" placeholder="Masukkan Email" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="nama" placeholder="Masukkan Nama" required>
@@ -112,9 +109,21 @@ if (isset($_POST['submit'])) {
                                             <input type="text" class="form-control form-control-user" name="nohp" placeholder="Masukkan No. HP" required>
                                         </div>
                                         <div class="form-group">
-                                            <textarea class="form-control form-control-user" name="deskripsi" placeholder="Masukkan Deskripsi" required></textarea>
+                                            <input type="password" id="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password Baru" required>
+                                            <span id="error-message1" style="color: red;"></span>
                                         </div>
+                                        
+
                                         <div class="form-group">
+                                            <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                            <span id="error-message" style="color: red;"></span>
+                                        </div>
+
+
+                                        <!-- <div class="form-group">
+                                            <textarea class="form-control form-control-user" name="deskripsi" placeholder="Masukkan Deskripsi" required></textarea>
+                                        </div> -->
+                                        <!-- <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="instagram_link" placeholder="Masukkan Instagram Link" required>
                                         </div>
                                         <div class="form-group">
@@ -122,7 +131,7 @@ if (isset($_POST['submit'])) {
                                         </div>
                                         <div class="form-group">
                                             <input type="text" class="form-control form-control-user" name="facebook_link" placeholder="Masukkan Facebook Link" required>
-                                        </div>
+                                        </div> -->
                                         <button type="submit" name="submit" class="btn btn-secondary btn-user btn-block">
                                             Register
                                         </button>
@@ -143,7 +152,46 @@ if (isset($_POST['submit'])) {
         </div>
 
     </div>
+    <script>
+            $(document).ready(function () {
+            // Function to validate password format
+            function validatePassword(password) {
+                // Password should be at least 8 characters and contain a combination of letters and numbers
+                var passwordRegex = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
+                return passwordRegex.test(password);
+            }
 
+            // Function to display error message
+            function displayErrorMessage(message, elementId) {
+                $("#" + elementId).text(message);
+            }
+
+            // Event handler for password input
+            $("#password").on("input", function () {
+                var password = $(this).val();
+                var errorMessageId = "error-message1";
+
+                if (validatePassword(password)) {
+                    displayErrorMessage("", errorMessageId);
+                } else {
+                    displayErrorMessage("Password harus minimal 8 karakter dan mengandung kombinasi huruf dan angka.", errorMessageId);
+                }
+            });
+
+            // Event handler for password-ulang input
+            $("#password-ulang").on("input", function () {
+                var confirmPassword = $(this).val();
+                var password = $("#password").val();
+                var errorMessageId = "error-message";
+
+                if (password === confirmPassword) {
+                    displayErrorMessage("", errorMessageId);
+                } else {
+                    displayErrorMessage("Ulangi password harus sama dengan password baru di atas.", errorMessageId);
+                }
+            });
+        });
+</script>
     <?php include "footer.php"; ?>
     <?php include "plugin.php"; ?>
 
