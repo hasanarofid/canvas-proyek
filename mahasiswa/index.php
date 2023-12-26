@@ -147,18 +147,24 @@ if (isset($_POST['submitDone'])) {
                                 </div>
                                 <div class="card-body">
                                     <?php
-                                    $sql = "SELECT * FROM tasks WHERE task_status = 'To Do'";
-                                    $result = $conn->query($sql);
+                                    $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'To Do' AND mahasiswa_id = ?");
+                                    $sql->bind_param("i", $mahasiswa_id); // Bind the parameter
                                     
-                                    $tasksToDo = array();
+                                    // Execute the statement
+                                    $result = $sql->execute();
+                                    $mahasiswa_id = $mahasiswa_id;
+                                    $result = $sql->execute();
+
+                                    if ($result) {
+                                        // Fetch the results
+                                        $tasksToDo = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
                                     
-                                    if ($result->num_rows > 0) {
-                                        // Output data of each row
-                                        while ($row = $result->fetch_assoc()) {
-                                            $tasksToDo[] = $row;
-                                        }
+                                        // Do something with $tasksToDo
+                                    } else {
+                                        // Handle the error, for example:
+                                        echo "Error: " . $sql->error;
                                     }
-                                 
+                                    
                                     foreach ($tasksToDo as $task) {
                                         echo '<div class="card mb-3">
                                                 <div class="card-body">
@@ -181,17 +187,26 @@ if (isset($_POST['submitDone'])) {
                                 </div>
                                 <div class="card-body">
                                 <?php
-                                    $sql = "SELECT * FROM tasks WHERE task_status = 'Doing'";
-                                    $result = $conn->query($sql);
-                                    
-                                    $tasksDoing = array();
-                                    
-                                    if ($result->num_rows > 0) {
-                                        // Output data of each row
-                                        while ($row = $result->fetch_assoc()) {
-                                            $tasksDoing[] = $row;
-                                        }
-                                    }
+                                 $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'Doing' AND mahasiswa_id = ?");
+                                 $sql->bind_param("i", $mahasiswa_id); // Bind the parameter
+                                 
+                                 // Execute the statement
+                                 $result = $sql->execute();
+                                 $mahasiswa_id = $mahasiswa_id;
+                                 $result = $sql->execute();
+
+                                 if ($result) {
+                                     // Fetch the results
+                                     $tasksDoing = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+                                 
+                                     // Do something with $tasksToDo
+                                 } else {
+                                     // Handle the error, for example:
+                                     echo "Error: " . $sql->error;
+                                 }
+                                 
+
+                                  
                                  
                                     foreach ($tasksDoing as $task) {
                                         echo '<div class="card mb-3">
@@ -215,18 +230,23 @@ if (isset($_POST['submitDone'])) {
                                 </div>
                                 <div class="card-body">
                                 <?php
-                                    $sql = "SELECT * FROM tasks WHERE task_status = 'Done'";
-                                    $result = $conn->query($sql);
-                                    
-                                    $tasksDone = array();
-                                    
-                                    if ($result->num_rows > 0) {
-                                        // Output data of each row
-                                        while ($row = $result->fetch_assoc()) {
-                                            $tasksDone[] = $row;
-                                        }
-                                    }
-                                 
+                                $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'Done' AND mahasiswa_id = ?");
+                                $sql->bind_param("i", $mahasiswa_id); // Bind the parameter
+                                
+                                // Execute the statement
+                                $result = $sql->execute();
+                                $mahasiswa_id = $mahasiswa_id;
+                                $result = $sql->execute();
+
+                                if ($result) {
+                                    // Fetch the results
+                                    $tasksDone = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+                                
+                                    // Do something with $tasksToDo
+                                } else {
+                                    // Handle the error, for example:
+                                    echo "Error: " . $sql->error;
+                                }
                                     foreach ($tasksDone as $task) {
                                         echo '<div class="card mb-3">
                                                 <div class="card-body">
@@ -392,7 +412,7 @@ if (isset($_POST['submitDone'])) {
                             ?>
 
                             <?php foreach ($tasks as $task) : ?>
-                                <div class="card shadow mb-4">
+                                <div class="card shadow mb-4" style="display: none;">
                                     <div class="card-header py-3">
                                         <h6 class="m-0 font-weight-bold text-primary"><?= htmlspecialchars($task['task_name']); ?> (<b><?= htmlspecialchars($task['task_status']); ?></b>)</h6>
                                     </div>
