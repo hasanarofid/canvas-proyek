@@ -54,10 +54,11 @@ if (isset($_POST['upload_submission'])) {
         // Submission belum ada, unggah file
         if (move_uploaded_file($submission_tmp, $submission_path)) {
             // Insert data submission ke dalam tabel assignment_submissions
-            $insert_submission_query = "INSERT INTO assignment_submissions (assignment_id, mahasiswa_id, submission_file)
-                VALUES (?, ?, ?)";
-            $stmt = $conn->prepare($insert_submission_query);
-            $stmt->bind_param("iis", $assignment_id, $mahasiswa_id, $submission_file);
+            $insert_submission_query = "INSERT INTO assignment_submissions (assignment_id, mahasiswa_id, submission_file, status)
+            VALUES (?, ?, ?, 'Done')";
+        $stmt = $conn->prepare($insert_submission_query);
+        $stmt->bind_param("iis", $assignment_id, $mahasiswa_id, $submission_file);
+        
 
             if ($stmt->execute()) {
 
@@ -243,18 +244,14 @@ if (isset($_POST['submit_feedback'])) {
                                                 <td>
                                                     <!-- status task mahasiswa -->
                                                 <?php
-                                               $sql = "SELECT * FROM tasks WHERE class_id = ? AND mahasiswa_id = ?";
-                                               $status = $conn->prepare($sql);
-                                               
-                                               
-                                               $status->bind_param("ii", $assignment['class_id'], $mahasiswa_id);
-                                               $status->execute();
-                                               $statustask = $status->get_result();
-                                               $sts = $statustask->fetch_assoc();
+                                                 $stmt = $conn->prepare("SELECT * FROM assignment_submissions WHERE assignment_id = ? AND mahasiswa_id = ?");
+                                                 $stmt->bind_param("ii", $assignment['assignment_id'], $mahasiswa_id);
+                                                 $stmt->execute();
+                                                 $sts = $stmt->get_result()->fetch_assoc();
                                                if ($sts) {
-                                                echo htmlspecialchars($sts['task_status']);
+                                                echo htmlspecialchars($sts['status']);
                                                 } else {
-                                                    echo "Belum dinilai";
+                                                    echo "Doing";
                                                 }
                                                 ?>
                                                 </td>

@@ -52,11 +52,12 @@ if (isset($_POST['submit'])) {
 
 if (isset($_POST['edit'])) {
     // Ambil data dari form
-    $jenis_colaboration = mysqli_real_escape_string($conn, $_POST['jenis_colaboration']);
-    $link = mysqli_real_escape_string($conn, $_POST['link']);
+    $nama = mysqli_real_escape_string($conn, $_POST['nama']);
+    $nim = mysqli_real_escape_string($conn, $_POST['nim']);
+    $nohp = mysqli_real_escape_string($conn, $_POST['nohp']);
     $id = mysqli_real_escape_string($conn, $_POST['id']);
 
-    if (empty($jenis_colaboration) || empty($link) ) {
+    if (empty($nama) || empty($nim) ) {
         $script = "
             Swal.fire({
                 icon: 'error',
@@ -68,8 +69,8 @@ if (isset($_POST['edit'])) {
             });
         ";
     } else {
-        $query = "UPDATE collaboration SET jenis_colaboration = '$jenis_colaboration', link = '$link'
-                  WHERE id = '$id' AND mahasiswa_id = '$mahasiswa_id'";
+        $query = "UPDATE mahasiswa SET nama = '$nama', nim = '$nim', nohp = '$nohp'
+                  WHERE id = '$id' ";
         if (mysqli_query($conn, $query)) {
             $script = "
                 Swal.fire({
@@ -145,41 +146,12 @@ if (isset($_POST['hapus'])) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    <div class="mb-3">
-                        <p >
-                            <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
-                                <i class="fas fa-plus-square"></i> Kelola Collaboration
-                            </a>
-                        </p>
-                        <div class="collapse" id="collapseExample">
-                            <div class="card card-body">
-                                <form method="POST" action="" enctype="multipart/form-data">
-                                    <div class="form-group">
-                                        <label for="task_name">Jenis:</label>
-                                        <select name="jenis_colaboration" id="jenis_colaboration" class="form-control" required>
-                                            <option value="">.:Pilih:.</option>
-                                            <option value="google docs">google docs</option>
-                                            <option value="google slide">google slide</option>
-                                            <option value="google sheet">google sheet</option>
-                                        </select>
-
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="task_description">Link:</label>
-                                        <input type="text" name="link" id="link" class="form-control" required>
-                                    </div>
-                                
-                                    <button type="submit" name="submit" class="btn btn-secondary w-100">Tambah Collaboration</button>
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
+            
                     <!-- Content Row -->
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-secondary">List Collaboration</h6>
+                            <h6 class="m-0 font-weight-bold text-secondary">List Mahasiswa</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -187,17 +159,17 @@ if (isset($_POST['hapus'])) {
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Collaboration</th>
-                                            <th>Link</th>
-                                            <th>User Collaboration</th>
+                                            <th>Nama</th>
+                                            <th>Nim</th>
+                                            <th>No Telp</th>
+                                            <th>Nilai</th>
                                             <th >Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <?php
-                                        $stmt = $conn->prepare("SELECT * FROM collaboration WHERE mahasiswa_id = ?");
-                                        $stmt->bind_param("i", $mahasiswa_id);
-                                        $mahasiswa_id = $mahasiswa_id;
+                                        $stmt = $conn->prepare("SELECT * FROM assignment_submissions WHERE assignment_id = ?");
+                                        $stmt->bind_param("i", $_GET['assignment_id']);
 
                                         $stmt->execute();
                                         $collaboration = $stmt->get_result();
@@ -206,75 +178,84 @@ if (isset($_POST['hapus'])) {
                                         <?php $i = 1; ?>
                                         <?php foreach ($collaboration as $colab) : ?>
                                             <?php
-$sql = "SELECT * FROM  collaboration_detail WHERE collaboration_id = ?";
+$sql = "SELECT * FROM  mahasiswa WHERE id = ?";
 $stmt = $conn->prepare($sql);
 
 // Bind the parameter
-$stmt->bind_param("i", $colab['id']);
+$stmt->bind_param("i", $colab['mahasiswa_id']);
 
 // Execute the query
 $stmt->execute();
 
 // Get the result
 $result = $stmt->get_result();
+$mahasiswa = $result->fetch_assoc();
 // var_dump($result);die;
+$sql2 = "SELECT * FROM grades WHERE  mahasiswa_id = ?";
+$stmt2 = $conn->prepare($sql2);
+
+// Assuming $colab['submission_id'] and $colab['mahasiswa_id'] are the values you want to use
+$stmt2->bind_param("i", $colab['mahasiswa_id']);
+
+// Execute the query
+$stmt2->execute();
+
+// Get the result
+$resultaall = $stmt2->get_result();
+// var_dump($resultaall);die;
+
+
 
 
                                                  ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
-                                                <td><?= htmlspecialchars($colab['jenis_colaboration']); ?></td>
-                                                <td><a target="_blank" href="<?= $colab['link'] ?>"><?= $colab['link'] ?></a></td>
+                                                <td><?= htmlspecialchars($mahasiswa['nama']); ?></td>
+                                                <td><?= htmlspecialchars($mahasiswa['nim']); ?></td>
+                                                <td><?= htmlspecialchars($mahasiswa['nohp']); ?></td>
                                                 <td>
                                                 <?php
-                                                if ($result->num_rows > 0) {
-                                                    while ($row = $result->fetch_assoc()) {
-                                                        echo "<li>{$row['nama']} - {$row['email']}</li>";
+                                                if ($resultaall->num_rows > 0) {
+                                                    while ($row = $resultaall->fetch_assoc()) {
+                                                        echo "<li>{$row['grade']} - {$row['kriteria']}</li>";
                                                     }
                                                 } else {
-                                                    echo "No collaboration details found.";
+                                                    echo "Tidak ada data nilia.";
                                                 }
                                                 ?>
 
                                                 </td>
 
                                                 <td >
-                                                    <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $colab['id'] ?>">Edit</a>
-                                                    <br><br>
-                                                    <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapusModal<?= $colab['id'] ?>">Hapus</a>
-                                                    <br><br>
-
-                                                    <a target="_blank" href="colaboration_detail.php?id=<?= $colab['id']; ?>" class="btn btn-sm btn-info"  >Add User Collaboration </a>
+                                                    <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $colab['submission_id'] ?>">Edit</a>
                                                
                                                 </td>
                                             </tr>
 
                                             <!-- Modal Edit Tugas -->
-                                            <div class="modal fade" id="editModal<?= $colab['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+                                            <div class="modal fade" id="editModal<?= $colab['submission_id']; ?>" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
                                                 <div class="modal-dialog modal-lg" role="document">
                                                     <div class="modal-content">
                                                         <div class="modal-header">
-                                                            <h5 class="modal-title" id="editModalLabel">Edit Data Collaboration</h5>
+                                                            <h5 class="modal-title" id="editModalLabel">Edit Data Mahasiswa</h5>
                                                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                 <span aria-hidden="true">&times;</span>
                                                             </button>
                                                         </div>
                                                         <div class="modal-body">
                                                             <form action="" method="POST">
-                                                                <input type="hidden" name="id" value="<?= $colab['id']; ?>">
+                                                                <input type="hidden" name="id" value="<?= $colab['mahasiswa_id']; ?>">
                                                                 <div class="form-group">
-                                                                    <label for="task_name">Jenis:</label>
-                                                                    <select name="jenis_colaboration" id="jenis_colaboration" class="form-control" required>
-                                                                        <option value="">.:Pilih:.</option>
-                                                                        <option value="google docs" <?php echo ($colab['jenis_colaboration'] === 'google docs') ? 'selected' : ''; ?>>google docs</option>
-                                                                    <option value="google slide" <?php echo ($colab['jenis_colaboration'] === 'google slide') ? 'selected' : ''; ?>>google slide</option>
-                                                                    <option value="google sheet" <?php echo ($colab['jenis_colaboration'] === 'google sheet') ? 'selected' : ''; ?>>google sheet</option>
-                                                                     </select>
-
+                                                                    <label for="task_description">Nama:</label>
+                                                                    <input type="text" name="nama" id="nama" class="form-control" value="<?=  $mahasiswa['nama'] ?>" required>
                                                                 </div>
                                                                 <div class="form-group">
-                                                                    <label for="task_description">Link:</label>
-                                                                    <input type="text" name="link" id="link" class="form-control" value="<?=  $colab['link'] ?>" required>
+                                                                    <label for="task_description">NIM:</label>
+                                                                    <input type="text" name="nim" id="nim" class="form-control" value="<?=  $mahasiswa['nim'] ?>" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                    <label for="task_description">No Hp:</label>
+                                                                    <input type="text" name="nohp" id="nohp" class="form-control" value="<?=  $mahasiswa['nohp'] ?>" required>
                                                                 </div>
                                                                 <button type="submit" name="edit" class="btn btn-secondary w-100">Simpan</button>
                                                             </form>

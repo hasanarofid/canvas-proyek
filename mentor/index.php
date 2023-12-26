@@ -28,6 +28,138 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
+                <div class="row mt-4">
+                        <!-- Tasks To Do -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    To Do
+                                </div>
+                                <div class="card-body">
+                                    <?php
+                                    $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'To Do' ");
+                                    
+                                    // Execute the statement
+                                    $result = $sql->execute();
+                                    // $mahasiswa_id = $mahasiswa_id;
+                                    $result = $sql->execute();
+
+                                    if ($result) {
+                                        // Fetch the results
+                                        $tasksToDo = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+                                    
+                                        // Do something with $tasksToDo
+                                    } else {
+                                        // Handle the error, for example:
+                                        echo "Error: " . $sql->error;
+                                    }
+                                    
+                                    foreach ($tasksToDo as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                    // Check if $tasksToDo is empty
+                                    if (empty($tasksToDo)) {
+                                        echo '<p>No tasks available.</p>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks Doing -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-warning text-white">
+                                    Doing
+                                </div>
+                                <div class="card-body">
+                                <?php
+                                 $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'Doing' ");
+                                 
+                                 // Execute the statement
+                                 $result = $sql->execute();
+
+                                 if ($result) {
+                                     // Fetch the results
+                                     $tasksDoing = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+                                 
+                                     // Do something with $tasksToDo
+                                 } else {
+                                     // Handle the error, for example:
+                                     echo "Error: " . $sql->error;
+                                 }
+                                 
+
+                                  
+                                 
+                                    foreach ($tasksDoing as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                     // Check if $tasksDone is empty
+                                     if (empty($tasksDoing)) {
+                                        echo '<p>No tasks available.</p>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks Done -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    Done
+                                </div>
+                                <div class="card-body">
+                                <?php
+                                $sql = $conn->prepare("SELECT * FROM tasks WHERE task_status = 'Done' ");
+                                
+                                // Execute the statement
+                                $result = $sql->execute();
+                                $result = $sql->execute();
+
+                                if ($result) {
+                                    // Fetch the results
+                                    $tasksDone = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
+                                
+                                    // Do something with $tasksToDo
+                                } else {
+                                    // Handle the error, for example:
+                                    echo "Error: " . $sql->error;
+                                }
+                                    foreach ($tasksDone as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                    // Check if $tasksDone is empty
+                                    if (empty($tasksDone)) {
+                                        echo '<p>No tasks available.</p>';
+                                    }
+                                    ?>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<br>
+
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>

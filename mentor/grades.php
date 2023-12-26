@@ -26,10 +26,10 @@ if (isset($_POST['submit_grade'])) {
     
 
     // Perbarui data ke dalam tabel grades
-    $insert_query = "INSERT INTO grades (submission_id, mahasiswa_id, grade,kriteria) 
-                     VALUES (?, ?, ?,?)";
-    $stmt = $conn->prepare($insert_query);
-    $stmt->bind_param("iiii", $submission_id, $mahasiswa_id, $grade,$lastLetter);
+    // $insert_query = "INSERT INTO grades (submission_id, mahasiswa_id, grade,kriteria) 
+    //                  VALUES (?, ?, ?,?)";
+    // $stmt = $conn->prepare($insert_query);
+    // $stmt->bind_param("iiii", $submission_id, $mahasiswa_id, $grade,$lastLetter);
 
     // Mendapatkan assignment_id dan mahasiswa_id dari submission_id
     $get_ids_query = "SELECT assignment_id, mahasiswa_id FROM assignment_submissions WHERE submission_id = ?";
@@ -38,12 +38,51 @@ if (isset($_POST['submit_grade'])) {
     $stmt_get_ids->execute();
     $result = $stmt_get_ids->get_result();
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        $assignment_id = $row['assignment_id'];
-        $mahasiswa_id = $row['mahasiswa_id'];
+    $submission_id = mysqli_real_escape_string($conn, $_POST['submission_id']);
+    $mahasiswa_id = mysqli_real_escape_string($conn, $_POST['mahasiswa_id']);
 
-        if ($stmt->execute()) {
+    $check_query = "SELECT * FROM grades WHERE submission_id = ? AND mahasiswa_id = ?";
+    $check_stmt = $conn->prepare($check_query);
+    $check_stmt->bind_param("ii", $submission_id, $mahasiswa_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+
+    $status_update = 0;
+    if ($result->num_rows > 0) {
+        // Update existing record
+        // var_dump($lastLetter);die;
+        $update_query = "UPDATE grades SET grade = ?, kriteria = ? WHERE submission_id = ? AND mahasiswa_id = ?";
+        $update_stmt = $conn->prepare($update_query);
+        
+        if (!$update_stmt) {
+            die('Error preparing update statement: ' . $conn->error);
+        }
+        
+        $update_stmt->bind_param("ssii", $grade, $lastLetter, $submission_id, $mahasiswa_id);
+        
+        if (!$update_stmt->execute()) {
+            die('Error updating data: ' . $update_stmt->error);
+        }
+        
+        $update_stmt->close();
+
+                $status_update = 1;
+    } else {
+        // Insert new record
+        $insert_query = "INSERT INTO grades (submission_id, mahasiswa_id, grade,kriteria) VALUES (?, ?, ?,?)";
+        $insert_stmt = $conn->prepare($insert_query);
+        $insert_stmt->bind_param("iiss", $submission_id, $mahasiswa_id, $grade,$lastLetter);
+        $insert_stmt->execute();
+        $status_update = 1;
+    }
+
+
+    if ($status_update) {
+        // $row = $result->fetch_assoc();
+        // $assignment_id = $row['assignment_id'];
+        // $mahasiswa_id = $row['mahasiswa_id'];
+
+        // if ($stmt->execute()) {
             $script = "
                 Swal.fire({
                     icon: 'success',
@@ -53,17 +92,17 @@ if (isset($_POST['submit_grade'])) {
                     showConfirmButton: false
                 });
             ";
-        } else {
-            $script = "
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal Menambahkan Grade!',
-                    timer: 3000,
-                    timerProgressBar: true,
-                    showConfirmButton: false
-                });
-            ";
-        }
+        // } else {
+        //     $script = "
+        //         Swal.fire({
+        //             icon: 'error',
+        //             title: 'Gagal Menambahkan Grade!',
+        //             timer: 3000,
+        //             timerProgressBar: true,
+        //             showConfirmButton: false
+        //         });
+        //     ";
+        // }
     } else {
         $script = "
             Swal.fire({
@@ -172,6 +211,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['gradeValue'])) {
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
+                <p>
+                            <a class="btn btn-secondary"  href="mahasiswa.php?assignment_id=<?= $_GET['assignment_id'] ?>">
+                                <i class="fas fa-plus-square"></i> List Data Mahasiswa
+                            </a>
+                        </p>
                     <?php
                     $assignment_id = $_GET['assignment_id'];
                     $assignment = query("SELECT * FROM assignments WHERE assignment_id = $assignment_id")[0];
@@ -214,6 +258,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['gradeValue'])) {
                                                 <td>
                                                         <form action="" method="POST">
                                                             <input type="hidden" name="submission_id" value="<?= $submission['submission_id']; ?>">
+                                                            <input type="hidden" name="mahasiswa_id" value="<?= $submission['mahasiswa_id']; ?>">
+
                                                             <input type="hidden" name="kriteria" id="kriteria_name">
                                                             <input type="number" value="<?= !empty($submission['grade']) ? $submission['grade'] : '' ?>" class="form-control" id="grade" name="grade" required>
                                                             <p>Kriteria : <span id="kriteria"><?= !empty($submission['kriteria']) ? $submission['kriteria'] : '' ?></span> </p>
