@@ -148,7 +148,7 @@ if (isset($_POST['hapus'])) {
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
                     <div class="mb-3">
-                        <p>
+                        <p style="display: none;">
                             <a class="btn btn-secondary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
                                 <i class="fas fa-plus-square"></i> Kelola Tugas
                             </a>
@@ -178,7 +178,7 @@ if (isset($_POST['hapus'])) {
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-secondary">Data Tugas</h6>
+                            <h6 class="m-0 font-weight-bold text-secondary">List Tugas</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -189,7 +189,7 @@ if (isset($_POST['hapus'])) {
                                             <th>Nama Tugas</th>
                                             <th>Deskripsi Tugas</th>
                                             <th>Tanggal Deadline</th>
-                                            <th>Aksi</th>
+                                            <th style="display: none;">Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -204,12 +204,22 @@ if (isset($_POST['hapus'])) {
 
                                         <?php $i = 1; ?>
                                         <?php foreach ($tasks as $task) : ?>
+                                            <?php
+$stmt = $conn->prepare("SELECT * FROM assignment WHERE class_id = ? ");
+$stmt->bind_param("i", $task['class_id']);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Fetch one row as an associative array
+$existing_submission = $result->fetch_assoc();
+var_dump($existing_submission);die;
+                                                 ?>
                                             <tr>
                                                 <td><?= $i; ?></td>
                                                 <td><?= htmlspecialchars($task['task_name']); ?></td>
                                                 <td><?= htmlspecialchars($task['task_description']); ?></td>
                                                 <td><?= htmlspecialchars($task['task_due_date']); ?></td>
-                                                <td>
+                                                <td style="display: none;">
                                                     <a href="#" class="btn btn-sm btn-secondary" data-toggle="modal" data-target="#editModal<?= $task['task_id'] ?>">Edit</a>
                                                     <br><br>
                                                     <a href="#" class="btn btn-sm btn-danger" data-toggle="modal" data-target="#hapusModal<?= $task['task_id'] ?>">Hapus</a>

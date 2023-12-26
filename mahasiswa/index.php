@@ -174,6 +174,10 @@ if (isset($_POST['submitDone'])) {
                                                 </div>
                                             </div>';
                                     }
+                                    // Check if $tasksToDo is empty
+                                    if (empty($tasksToDo)) {
+                                        echo '<p>No tasks available.</p>';
+                                    }
                                     ?>
                                 </div>
                             </div>
@@ -217,6 +221,10 @@ if (isset($_POST['submitDone'])) {
                                                 </div>
                                             </div>';
                                     }
+                                     // Check if $tasksDone is empty
+                                     if (empty($tasksDoing)) {
+                                        echo '<p>No tasks available.</p>';
+                                    }
                                     ?>
                                 </div>
                             </div>
@@ -255,6 +263,10 @@ if (isset($_POST['submitDone'])) {
                                                     <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
                                                 </div>
                                             </div>';
+                                    }
+                                    // Check if $tasksDone is empty
+                                    if (empty($tasksDone)) {
+                                        echo '<p>No tasks available.</p>';
                                     }
                                     ?>
 

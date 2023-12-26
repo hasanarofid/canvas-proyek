@@ -38,12 +38,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sql = "SELECT * FROM mahasiswa WHERE email = '$email' LIMIT 1";
     $result = mysqli_query($conn, $sql);
     $user = mysqli_fetch_assoc($result);
-
+    // var_dump($user['nama']);die;
     // verifikasi password
     if (password_verify($password, $user['password'])) {
         // jika password benar, redirect ke halaman dashboard
         $_SESSION["mahasiswa"] = true;
         $_SESSION["email"] = $email;
+        $_SESSION["nama"] = $user['nama'];
         header("Location: ./index.php");
         exit();
     } else {

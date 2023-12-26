@@ -195,7 +195,7 @@ if (isset($_POST['submit_feedback'])) {
                                                         <form action="" method="POST" enctype="multipart/form-data">
                                                             <input type="hidden" name="assignment_id" value="<?= $assignment['assignment_id']; ?>">
                                                             <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa_id; ?>">
-                                                            <input type="file" class="form-control" id="submission_file" name="submission_file">
+                                                            <input type="file" class="form-control" id="submission_file" name="submission_file" accept=".pdf, image/jpeg, image/jpg, image/png, image/gif">
                                                             <button type="submit" name="upload_submission" class="btn btn-primary mt-2">Upload Submission</button>
                                                         </form>
                                                     </td>
@@ -233,19 +233,24 @@ if (isset($_POST['submit_feedback'])) {
                                                     $stmt->execute();
                                                     $result = $stmt->get_result();
                                                     $existing_feedback = $result->fetch_assoc();
-
-                                                    if ($existing_feedback['feedback'] === null) {
-                                                        // Belum ada feedback, tampilkan form
-                                                    ?>
+                                                    
+                                                    if ($existing_feedback !== null && isset($existing_feedback['feedback'])) {
+                                                        // Feedback is available, display it
+                                                        echo htmlspecialchars($existing_feedback['feedback']);
+                                                    } else {
+                                                        // No feedback available, display a message or a form
+                                                        echo '<p>No feedback available.</p>';
+                                                        // Uncomment the following lines if you want to display a form
+                                                        /*
+                                                        ?>
                                                         <form action="" method="POST" enctype="multipart/form-data">
                                                             <input type="hidden" name="submission_id" value="<?= $submission_id; ?>">
                                                             <input type="hidden" name="mahasiswa_id" value="<?= $mahasiswa_id; ?>">
                                                             <textarea class="form-control" id="feedback" name="feedback" rows="3"></textarea>
                                                             <button type="submit" name="submit_feedback" class="btn btn-primary mt-2">Submit Feedback</button>
                                                         </form>
-                                                    <?php } else {
-                                                        // Sudah ada feedback, tampilkan feedback yang sudah ada
-                                                        echo htmlspecialchars($existing_feedback['feedback']);
+                                                        <?php
+                                                        */
                                                     }
                                                     ?>
                                                 </td>

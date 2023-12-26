@@ -51,7 +51,7 @@ padding-left: 0;
     <li class="nav-item active">
         <a class="nav-link" href="task.php">
             <i class="fas fa-tasks"></i>
-            <span>Kelola Tugas</span></a>
+            <span>List Tugas</span></a>
     </li>
 
     <li class="nav-item active" style="display: none;">
@@ -64,6 +64,12 @@ padding-left: 0;
         <a class="nav-link" href="groups.php">
             <i class="fas fa-users"></i>
             <span>Groups</span></a>
+    </li>
+
+    <li class="nav-item active">
+        <a class="nav-link" href="collaboration.php">
+         <i class="fas fa-handshake"></i>
+            <span>Collaboration</span></a>
     </li>
 
     <li class="nav-item active">
