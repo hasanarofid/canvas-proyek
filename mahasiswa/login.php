@@ -80,15 +80,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <!-- Outer Row -->
         <div class="row justify-content-center">
-            <div class="d-flex flex-column">
+            <div class="d-flex flex-column mb-1">
                 <h4 class="mt-5 text-center">Canvas - Login Mahasiswa</h4>
-                <div class="d-flex justify-content-center">
-                <img src="../img/logocanvas.png" alt="Logo" class="img-fluid" width="100" >
-                </div>
+            <img src="../img/logocanvas.png" alt="Logo"  width="600px" height="200px" >
+                
             </div>
+
+
+
             <div class="col-xl-10 col-lg-12 col-md-9 col-sm-12">
 
-                <div class="card o-hidden border-0 my-5">
+                <div class="card o-hidden border-0">
                     <div class="card-body p-0">
                         <!-- Nested Row within Card Body -->
                         <div class="row">

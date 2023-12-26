@@ -138,6 +138,111 @@ if (isset($_POST['submitDone'])) {
                         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
                     </div>
 
+                    <div class="row mt-4">
+                        <!-- Tasks To Do -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-info text-white">
+                                    To Do
+                                </div>
+                                <div class="card-body">
+                                    <?php
+                                    $sql = "SELECT * FROM tasks WHERE task_status = 'To Do'";
+                                    $result = $conn->query($sql);
+                                    
+                                    $tasksToDo = array();
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // Output data of each row
+                                        while ($row = $result->fetch_assoc()) {
+                                            $tasksToDo[] = $row;
+                                        }
+                                    }
+                                 
+                                    foreach ($tasksToDo as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks Doing -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-warning text-white">
+                                    Doing
+                                </div>
+                                <div class="card-body">
+                                <?php
+                                    $sql = "SELECT * FROM tasks WHERE task_status = 'Doing'";
+                                    $result = $conn->query($sql);
+                                    
+                                    $tasksDoing = array();
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // Output data of each row
+                                        while ($row = $result->fetch_assoc()) {
+                                            $tasksDoing[] = $row;
+                                        }
+                                    }
+                                 
+                                    foreach ($tasksDoing as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tasks Done -->
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header bg-success text-white">
+                                    Done
+                                </div>
+                                <div class="card-body">
+                                <?php
+                                    $sql = "SELECT * FROM tasks WHERE task_status = 'Done'";
+                                    $result = $conn->query($sql);
+                                    
+                                    $tasksDone = array();
+                                    
+                                    if ($result->num_rows > 0) {
+                                        // Output data of each row
+                                        while ($row = $result->fetch_assoc()) {
+                                            $tasksDone[] = $row;
+                                        }
+                                    }
+                                 
+                                    foreach ($tasksDone as $task) {
+                                        echo '<div class="card mb-3">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">' . $task['task_name'] . '</h5>
+                                                    <p class="card-text">' . $task['task_description'] . '</p>
+                                                    <p class="card-text"><small class="text-muted">Due Date: ' . $task['task_due_date'] . '</small></p>
+                                                </div>
+                                            </div>';
+                                    }
+                                    ?>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<br>
                     <!-- Content Row -->
                     <div class="row">
                         <div class="col-xl-3 col-md-6 mb-4">
