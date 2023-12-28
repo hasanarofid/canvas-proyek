@@ -103,7 +103,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                             <input type="email" class="form-control form-control-user" name="email" placeholder="Masukkan Email" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-user" name="password" id="password" placeholder="Masukkan Password" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="showPasswordToggle">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                         <button type="submit" name="login" class="btn btn-secondary btn-user btn-block">
                                             Login
@@ -134,6 +141,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
 
     <script>
+                function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        var showPasswordToggle = document.getElementById('showPasswordToggle');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+        }
+    }
+
+    // Add click event listener to the eye icon
+    document.getElementById('showPasswordToggle').addEventListener('click', togglePasswordVisibility);
+  
         $(document).ready(function() {
             // $("#myModal").modal('show');
         });

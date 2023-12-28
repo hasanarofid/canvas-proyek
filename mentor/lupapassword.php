@@ -177,13 +177,30 @@ if (isset($_POST['submit'])) {
                                         </div>
 
                                         <div class="form-group">
-                                            <input type="password" id="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password Baru" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-user" name="password" id="password" placeholder="Masukkan Password" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="showPasswordToggle">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <span id="error-message1" style="color: red;"></span>
+
                                         </div>
+
+                                        
                                         
 
                                         <div class="form-group">
-                                            <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                        <div class="input-group">
+                                        <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="showPasswordToggle2">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <span id="error-message" style="color: red;"></span>
                                         </div>
                                         <button type="submit" name="submit" class="btn btn-secondary btn-user btn-block">
@@ -216,6 +233,41 @@ if (isset($_POST['submit'])) {
 
 
 <script>
+
+function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        var showPasswordToggle = document.getElementById('showPasswordToggle');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+        }
+    }
+
+    // Add click event listener to the eye icon
+    document.getElementById('showPasswordToggle').addEventListener('click', togglePasswordVisibility);
+ 
+    function togglePasswordVisibility2() {
+        var passwordInput = document.getElementById('password-ulang');
+        var showPasswordToggle = document.getElementById('showPasswordToggle2');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+        }
+    }
+
+    // Add click event listener to the eye icon
+    document.getElementById('showPasswordToggle2').addEventListener('click', togglePasswordVisibility2);
+ 
+
+    
             $(document).ready(function () {
             // Function to validate password format
             function validatePassword(password) {

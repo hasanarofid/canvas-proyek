@@ -35,11 +35,7 @@ if (isset($_POST['submit'])) {
     $password = mysqli_real_escape_string($conn, $_POST['password']);
     $nama = mysqli_real_escape_string($conn, $_POST['nama']);
     $nohp = mysqli_real_escape_string($conn, $_POST['nohp']);
-    $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
-    $instagram_link = mysqli_real_escape_string($conn, $_POST['instagram_link']);
-    $tiktok_link = mysqli_real_escape_string($conn, $_POST['tiktok_link']);
-    $facebook_link = mysqli_real_escape_string($conn, $_POST['facebook_link']);
-
+  
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
     $checkQuery = "SELECT * FROM mahasiswa WHERE email = '$email'";
@@ -57,8 +53,8 @@ if (isset($_POST['submit'])) {
             });
         ";
     } else {
-        $query = "INSERT INTO mahasiswa (email, password, nama, nohp, deskripsi, instagram_link, tiktok_link, facebook_link) 
-                  VALUES ('$email', '$hashedPassword', '$nama', '$nohp', '$deskripsi', '$instagram_link', '$tiktok_link', '$facebook_link')";
+        $query = "INSERT INTO mahasiswa (email, password, nama, nohp) 
+                  VALUES ('$email', '$hashedPassword', '$nama', '$nohp')";
         if (mysqli_query($conn, $query)) {
             $script = "
                 Swal.fire({
@@ -114,16 +110,31 @@ if (isset($_POST['submit'])) {
                                             <input type="text" class="form-control form-control-user" name="nohp" placeholder="Masukkan No. HP" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" id="password" class="form-control form-control-user" name="password" placeholder="Masukkan Password Baru" required>
+                                            <div class="input-group">
+                                                <input type="password" class="form-control form-control-user" name="password" id="password" placeholder="Masukkan Password" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="showPasswordToggle">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <span id="error-message1" style="color: red;"></span>
+
                                         </div>
+
                                         
 
                                         <div class="form-group">
-                                            <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                        <div class="input-group">
+                                        <input type="password" id="password-ulang" class="form-control form-control-user" name="password-ulang" placeholder="Ulangi Password Baru" required>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="showPasswordToggle2">
+                                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
                                             <span id="error-message" style="color: red;"></span>
                                         </div>
-
 
                                         <!-- <div class="form-group">
                                             <textarea class="form-control form-control-user" name="deskripsi" placeholder="Masukkan Deskripsi" required></textarea>
@@ -201,6 +212,41 @@ if (isset($_POST['submit'])) {
 
     <?php include "footer.php"; ?>
     <?php include "plugin.php"; ?>
+
+    <script>
+          function togglePasswordVisibility() {
+        var passwordInput = document.getElementById('password');
+        var showPasswordToggle = document.getElementById('showPasswordToggle');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+        }
+    }
+
+    // Add click event listener to the eye icon
+    document.getElementById('showPasswordToggle').addEventListener('click', togglePasswordVisibility);
+ 
+    function togglePasswordVisibility2() {
+        var passwordInput = document.getElementById('password-ulang');
+        var showPasswordToggle = document.getElementById('showPasswordToggle2');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye-slash" aria-hidden="true"></i>';
+        } else {
+            passwordInput.type = 'password';
+            showPasswordToggle.innerHTML = '<i class="fa fa-eye" aria-hidden="true"></i>';
+        }
+    }
+
+    // Add click event listener to the eye icon
+    document.getElementById('showPasswordToggle2').addEventListener('click', togglePasswordVisibility2);
+ 
+    </script>
 
     <script>
 
